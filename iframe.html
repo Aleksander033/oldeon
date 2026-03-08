@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Eon Loader Test (iframe2)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            transition: background 0.3s;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script type="module">
+    (async () => {
+      try {
+        console.log('[Loader] Loading glue.js');
+    
+        const res = await fetch('/glue.js');
+        if (!res.ok) throw new Error('Failed to load glue.js');
+    
+        const code = await res.text();
+        const blob = new Blob([code], { type: 'text/javascript' });
+        const url = URL.createObjectURL(blob);
+    
+        await import(url);
+        URL.revokeObjectURL(url);
+    
+        console.log('[Loader] Glue loaded successfully');
+      } catch (e) {
+        console.error('[Loader] Failed:', e);
+        window.accessDenied = true;
+        window.reason = e.message;
+      }
+    })();
+    </script>
+
+</body>
+
+</html>
